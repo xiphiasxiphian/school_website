@@ -1,4 +1,8 @@
-document.getElementById("lorum").innerHTML = "dance boy dance"
+function changeElement()
+{
+    document.getElementById("lorum").innerHTML = "dance boy dance"
+}
+   
 
 function startGame() {
     myGamePiece = new component(30, 30, "red", 10, 120);
