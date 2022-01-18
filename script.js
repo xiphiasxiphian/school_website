@@ -1,0 +1,1 @@
+document.getElementById("lorum").innerHTML = "dance boy dance"
