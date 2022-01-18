@@ -1,3 +1,10 @@
 p {
     color: red;
 }
+
+.std_text {
+    font-family:Arial, Helvetica, sans-serif;
+    color: black;
+    font-size: 12;
+    font-style: inherit;
+}
