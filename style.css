@@ -1,0 +1,12 @@
+body {
+    background-color: rgb(5, 225, 233);
+}
+
+#game_canvas {
+    border:5px solid #FFFFFF;
+    position: fixed;
+    top: 50%;
+    right: 50%;
+    margin-top: -240px;
+    margin-left: -325px; 
+}

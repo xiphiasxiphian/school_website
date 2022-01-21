@@ -12,7 +12,7 @@ var wPressed;
 var sPressed;
 
 var PLAYER_MOVEMENT_SPEED = 3;
-const BALL_MOVEMENT_SPEED = 4;
+var BALL_MOVEMENT_SPEED = 4;
 const MAX_BOUNCE_ANGLE = 45;
 
 const MOVEMENT_INCREASE = 1.05;
@@ -22,7 +22,7 @@ var loops = 0;
 function startGame()
 {
 
-    document.getElementById("start_game_button").parentNode.removeChild(document.getElementById("start_game_button"));
+    document.getElementById("game_start_button").parentNode.removeChild(document.getElementById("game_start_button"));
     gameCanvas.start();
 
     background = new component(gameCanvas.canvas.width, gameCanvas.canvas.height, "black", 0, 0);
@@ -60,6 +60,7 @@ function update()
     {
         ball.xVel = 0;
         ball.yVel = 0;
+        BALL_MOVEMENT_SPEED = 4;
     }
 
     if (canBounce)
@@ -167,6 +168,7 @@ var gameCanvas = {
     canvas : document.createElement("canvas"),
     start : function ()
     {
+        this.canvas.setAttribute("id", "game_canvas");
         this.canvas.width = 650;
         this.canvas.height = 480;
         this.context = this.canvas.getContext("2d");
@@ -251,6 +253,15 @@ function component(width, height, color, x, y, type)
     }
 
 }
+
+function sound(src)
+{
+    
+}
+
+
+
+
 
 function calculateNewVels(player)
 {
