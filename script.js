@@ -11,8 +11,11 @@ var player2Score;
 var wPressed;
 var sPressed;
 
-const playerMovementSpeed = 3;
-const ballMovementSpeed = 4;
+const PLAYER_MOVEMENT_SPEED = 3;
+const BALL_MOVEMENT_SPEED = 4;
+const MAX_BOUNCE_ANGLE = 60;
+
+var loops = 0;
 
 function startGame()
 {
@@ -23,18 +26,25 @@ function startGame()
     background = new component(gameCanvas.canvas.width, gameCanvas.canvas.height, "black", 0, 0);
     middleLine = new component(2, gameCanvas.canvas.height, "white", gameCanvas.canvas.width / 2, 0)
 
-    player1 = new component(20, 60, "white", 25, 120);
-    player2 = new component(20, 60, "white", gameCanvas.canvas.width - 25, 120);
+    player1 = new component(10, 60, "white", 25, 120);
+    player2 = new component(10, 60, "white", gameCanvas.canvas.width - 25, 120);
 
     player1Score = new component("30px", "Consolas", "gray", (gameCanvas.canvas.width / 2) - 60, 40, "text");
     player1Score.text = "0";
-    player2Score = new component("30px", "Consolas", "gray", (gameCanvas.canvas.width / 2) + 60, 40, "text");
+    player2Score = new component("30px", "Consolas", "gray", (gameCanvas.canvas.width / 2) + 45, 40, "text");
     player2Score.text = "0"
     
     ball = new component(10, 10, "white", gameCanvas.canvas.width / 2, gameCanvas.canvas.height / 2)
-    ball.xVel = -(ballMovementSpeed);
+    ball.xVel = -(BALL_MOVEMENT_SPEED);
     ball.yVel = (Math.random() * (1 - -1 + 1) + -1);
 }
+
+
+var canBounce = true
+var loopsAtBounce = 0;
+
+var reset = false;
+var loopsAtReset = 0;
 
 function update()
 {
@@ -43,26 +53,88 @@ function update()
     middleLine.update();
     player1.update();
     player2.update();
+
+    if (reset)
+    {
+        ball.xVel = 0;
+        ball.yVel = 0;
+    }
+
+    if (canBounce)
+    {
+        if (intersects(player1, ball))
+        {
+            newVels = calculateNewVels(player1);
+            ball.xVel = newVels[0];
+            ball.yVel = newVels[1];
+            canBounce = false;
+            loopsAtBounce = loops;
+        }
+        if (intersects(player2, ball))
+        {
+            newVels = calculateNewVels(player2);
+            ball.xVel = newVels[0];
+            ball.yVel = newVels[1];
+            canBounce = false;
+            loopsAtBounce = loops;
+        }
+    
+        if (ball.y < 0 || ball.y + ball.height > gameCanvas.canvas.height)
+        {
+            ball.yVel *= -1;
+            canBounce = false;
+            loopsAtBounce = loops;
+        }
+        if (ball.x < 0)
+        {
+            ball.x = gameCanvas.canvas.width / 2;
+            ball.y = gameCanvas.canvas.height / 2;
+            ball.xVel = 0;
+            ball.yVel = 0;
+            reset = true;
+            loopsAtReset = loops;
+
+            player2Score.text = (parseInt(player2Score.text) + 1).toString();
+        }
+        if (ball.x + ball.width > gameCanvas.canvas.width)
+        {
+            ball.x = gameCanvas.canvas.width / 2;
+            ball.y = gameCanvas.canvas.height / 2;
+            ball.xVel = 0;
+            ball.yVel = 0;
+            reset = true;
+            loopsAtReset = loops;
+
+            player1Score.text = (parseInt(player1Score.text) + 1).toString();
+        }
+    }
+    else 
+    {
+        if (loopsAtBounce + 5 < loops)
+        {
+            canBounce = true;
+        }
+    }
+
+    if (reset && loopsAtReset + 100 < loops)
+    {
+        var xDirection = -1;
+        if (Math.random() > 0.5)
+        {
+            xDirection = 1;
+        }
+
+
+        ball.xVel = xDirection * (BALL_MOVEMENT_SPEED);
+        ball.yVel = (Math.random() * (1 - -1 + 1) + -1);
+        reset = false;
+    }
+
     player1Score.update()
-
-    if (intersects(player1, ball))
-    {
-        ball.xVel *= -1;
-    }
-    if (intersects(player2, ball))
-    {
-        ball.xVel *= -1;
-    }
-    if (ball.y < 0 || ball.y + ball.height > gameCanvas.canvas.height)
-    {
-        ball.yVel *= -1;
-    }
-    if (ball.x < 0 || ball.x + ball.width > gameCanvas.canvas.width)
-    {
-        ball.xVel *= -1;
-    }
-
+    player2Score.update();
     ball.update();
+
+    loops += 1;
 }
 
 function intersects(obj1, obj2)
@@ -101,45 +173,37 @@ var gameCanvas = {
         {
             if (e.key == "w")
             {
-                document.getElementById("text").innerHTML = "W Key Pressed";
-                player1.yVel = -(playerMovementSpeed);
+                player1.yVel = -(PLAYER_MOVEMENT_SPEED);
             }
             else if (e.key == "s")
             {
-                document.getElementById("text").innerHTML = "S Key Pressed";
-                player1.yVel = playerMovementSpeed;
+                player1.yVel = PLAYER_MOVEMENT_SPEED;
             }
             if (e.key == "ArrowUp")
             {
-                document.getElementById("text").innerHTML = "Up Arrow Key Pressed";
-                player2.yVel = -(playerMovementSpeed);
+                player2.yVel = -(PLAYER_MOVEMENT_SPEED);
             }
             else if (e.key == "ArrowDown")
             {
-                document.getElementById("text").innerHTML = "Down Arrow Key Pressed";
-                player2.yVel = playerMovementSpeed;
+                player2.yVel = PLAYER_MOVEMENT_SPEED;
             }
         }, false);
         window.addEventListener("keyup", function (e)
         {
             if (e.key == "w")
             {
-                document.getElementById("text").innerHTML = "No Key Pressed";
                 player1.yVel = 0;
             }
             else if (e.key == "s")
             {
-                document.getElementById("text").innerHTML = "No Key Pressed";
                 player1.yVel = 0
             }
             if (e.key == "ArrowUp")
             {
-                document.getElementById("text").innerHTML = "No Key Pressed";
                 player2.yVel = 0;
             }
             else if (e.key == "ArrowDown")
             {
-                document.getElementById("text").innerHTML = "No Key Pressed";
                 player2.yVel = 0;
             }
         }, false);
@@ -182,4 +246,28 @@ function component(width, height, color, x, y, type)
         }
     }
 
+}
+
+function calculateNewVels(player)
+{
+    const currentBallY = ball.y;
+    const paddleCentre = player.y + (player.height / 2)
+    const currentBallXVel = ball.xVel;
+
+    const hitDifference = Math.abs(currentBallY - paddleCentre)
+    const bounceAngle = hitDifference * MAX_BOUNCE_ANGLE
+
+    var newVelX = BALL_MOVEMENT_SPEED * Math.cos(bounceAngle)
+    var newVelY = BALL_MOVEMENT_SPEED * -(Math.sin(bounceAngle))
+
+    if (currentBallXVel > 0)
+    {
+        newVelX = -(Math.abs(newVelX));
+    }
+    else if (currentBallXVel < 0)
+    {
+        newVelX = Math.abs(newVelX);
+    }
+
+    return [newVelX, newVelY]
 }
