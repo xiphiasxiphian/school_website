@@ -2,7 +2,11 @@ var player1;
 var player2;
 
 var background;
+var middleLine;
+
 var ball;
+var player1Score;
+var player2Score;
 
 var wPressed;
 var sPressed;
@@ -15,9 +19,18 @@ function startGame()
 
     document.getElementById("start_game_button").parentNode.removeChild(document.getElementById("start_game_button"));
     gameCanvas.start();
+
     background = new component(gameCanvas.canvas.width, gameCanvas.canvas.height, "black", 0, 0);
+    middleLine = new component(2, gameCanvas.canvas.height, "white", gameCanvas.canvas.width / 2, 0)
+
     player1 = new component(20, 60, "white", 25, 120);
     player2 = new component(20, 60, "white", gameCanvas.canvas.width - 25, 120);
+
+    player1Score = new component("30px", "Consolas", "gray", (gameCanvas.canvas.width / 2) - 60, 40, "text");
+    player1Score.text = "0";
+    player2Score = new component("30px", "Consolas", "gray", (gameCanvas.canvas.width / 2) + 60, 40, "text");
+    player2Score.text = "0"
+    
     ball = new component(10, 10, "white", gameCanvas.canvas.width / 2, gameCanvas.canvas.height / 2)
     ball.xVel = -(ballMovementSpeed);
     ball.yVel = (Math.random() * (1 - -1 + 1) + -1);
@@ -27,8 +40,10 @@ function update()
 {
     gameCanvas.clear()
     background.update();
+    middleLine.update();
     player1.update();
     player2.update();
+    player1Score.update()
 
     if (intersects(player1, ball))
     {
