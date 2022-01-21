@@ -11,9 +11,11 @@ var player2Score;
 var wPressed;
 var sPressed;
 
-const PLAYER_MOVEMENT_SPEED = 3;
+var PLAYER_MOVEMENT_SPEED = 3;
 const BALL_MOVEMENT_SPEED = 4;
-const MAX_BOUNCE_ANGLE = 60;
+const MAX_BOUNCE_ANGLE = 45;
+
+const MOVEMENT_INCREASE = 1.05;
 
 var loops = 0;
 
@@ -64,6 +66,7 @@ function update()
     {
         if (intersects(player1, ball))
         {
+            BALL_MOVEMENT_SPEED *= MOVEMENT_INCREASE;
             newVels = calculateNewVels(player1);
             ball.xVel = newVels[0];
             ball.yVel = newVels[1];
@@ -72,6 +75,7 @@ function update()
         }
         if (intersects(player2, ball))
         {
+            BALL_MOVEMENT_SPEED *= MOVEMENT_INCREASE;
             newVels = calculateNewVels(player2);
             ball.xVel = newVels[0];
             ball.yVel = newVels[1];
